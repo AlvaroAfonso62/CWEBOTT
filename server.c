@@ -26,15 +26,18 @@
 
 int s_clients[CLI_CONN];
 
-void t_accept(int *s_socket){
+void *t_accept(void *s_s){ 
+  int *s_socket = (int *) s_s;
+  int stemp_client, sc_size;
   struct sockaddr_in sc_addr;
-  int stemp_client;
   
+  sc_size = sizeof(sc_addr);
+
   int id = 0;
   
   while(1){
     
-    stemp_client = accept(s_socket, (struct sockaddr *) &sc_addr, sizeof(sc_addr));
+    stemp_client = accept(*s_socket, (struct sockaddr *) &sc_addr, &sc_size);
     
     if(stemp_client != -1){
     
@@ -50,7 +53,7 @@ void t_accept(int *s_socket){
 
 int main(int argc, char *argv[]){
   
-  pthread_t thread;
+  pthread_t thread[1];
 
   struct sockaddr_in ss_addr = {
     .sin_family       = AF_INET,
@@ -63,12 +66,12 @@ int main(int argc, char *argv[]){
   
   listen(s_socket, CLI_CONN);
   
-  pthread_create(thread, NULL, t_accept, &s_socket);
-  pthread_join(thread, NULL);
+  pthread_create(&(thread[1]), NULL, t_accept, &s_socket);
+  pthread_join(thread[1], NULL);
 
-  
+ 
 
-  
+
 
   return 0;
 
