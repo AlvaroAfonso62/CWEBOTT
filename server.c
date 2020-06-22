@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -40,9 +41,10 @@ void *t_accept(void *s_s){
     stemp_client = accept(*s_socket, (struct sockaddr *) &sc_addr, &sc_size);
     
     if(stemp_client != -1){
-    
       s_clients[id] = stemp_client;
       
+      printf("[!] %s\n[!] Cliente Conectado !\n", inet_ntoa(sc_addr.sin_addr));
+
       id++;
     }
 
@@ -52,13 +54,11 @@ void *t_accept(void *s_s){
 
 
 int main(int argc, char *argv[]){
-  
   pthread_t thread[1];
-
   struct sockaddr_in ss_addr = {
     .sin_family       = AF_INET,
     .sin_addr.s_addr  = htonl(INADDR_ANY),
-    .sin_port         = htons(8080)
+    .sin_port         = htons(atoi(argv[1]))
   };
 
   int s_socket = socket(AF_INET, SOCK_STREAM, 0);  
